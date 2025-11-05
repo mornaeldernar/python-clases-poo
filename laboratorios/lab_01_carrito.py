@@ -36,8 +36,7 @@ class CarritoCompras:
         """
         Inicializa un carrito vacío
         """
-        # TODO: Implementar inicialización
-        raise NotImplementedError("Debes implementar la inicialización del carrito")
+        self.items = {}
     
     def agregar_producto(self, producto, cantidad):
         """
@@ -48,8 +47,21 @@ class CarritoCompras:
         Returns:
             bool: True si se agregó correctamente, False si no hay stock
         """
-        # TODO: Implementar agregar producto
-        raise NotImplementedError("Debes implementar agregar_producto")
+        if cantidad <= 0:
+            return False
+        if producto.stock < cantidad:
+            return False
+        # Verificamos si existe en el carrito
+        if producto.codigo in self.items: #si existe entonces actualizamos la cantidad de productos que vamos a comprar
+            producto_actual, cantidad_actual = self.items[producto.codigo]
+            nueva_cantidad = cantidad_actual + cantidad
+            if producto.stock >= nueva_cantidad: #si la nueva cantidad que vamos a comprar es menor o igual actualizamos la cantidad en el carrito
+                self.items[producto.codigo] = (producto, nueva_cantidad)
+                return True
+            return False 
+        else: #no lo tenemos en el carrito, entonces lo agregamos al carrito
+            self.items[producto.codigo] = (producto, cantidad) 
+            return True
     
     def remover_producto(self, codigo_producto):
         """
@@ -59,8 +71,10 @@ class CarritoCompras:
         Returns:
             bool: True si se removió correctamente, False si no existe
         """
-        # TODO: Implementar remover producto
-        raise NotImplementedError("Debes implementar remover_producto")
+        if codigo_producto in self.items: #Existe en nuestro carrito???
+            del self.items[codigo_producto] #¡si existe! Elimínalo
+            return True
+        return False #No existe,no lo podemos eliminar porque no existe
     
     def calcular_total(self):
         """
@@ -68,17 +82,29 @@ class CarritoCompras:
         Returns:
             float: Total a pagar
         """
-        # TODO: Implementar cálculo del total
-        raise NotImplementedError("Debes implementar calcular_total")
+        total = 0
+        for producto, cantidad in self.items.values():
+            subtotal = producto.precio * cantidad
+            if cantidad >= 2:
+                subtotal *= 0.9
+                print(f"El producto {producto.nombre} tiene un descuento por comprar {cantidad} productos teniendo un subtotal de ${subtotal}")
+            total += subtotal
+        return round(total, 2)
     
+
     def realizar_compra(self):
         """
         Finaliza la compra y actualiza el inventario
         Returns:
             bool: True si la compra fue exitosa, False si hubo problemas
         """
-        # TODO: Implementar realizar compra
-        raise NotImplementedError("Debes implementar realizar_compra")
+        for producto, cantidad in self.items.values():
+            if producto.stock < cantidad:
+                return False
+        for producto, cantidad in self.items.values():
+            producto.actualizar_stock(cantidad)
+        self.items.clear()
+        return True
 
 def main():
     # Crear productos de prueba

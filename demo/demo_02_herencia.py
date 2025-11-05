@@ -51,9 +51,7 @@ class ProductoDigital(ProductoBase):
         super().__init__(codigo, nombre, precio)
         self.formato = formato
     
-    def calcular_precio_final(self):
-        """Sobrescribe el método (sin costos adicionales)"""
-        return self._precio
+    
 
 def demo_herencia():
     print("=== Demo: Herencia y Polimorfismo en Python ===")
